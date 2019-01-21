@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace DecklistProjectASP.Data.Migrations
+namespace DecklistProjectASP.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class DecklistsAdd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,33 @@ namespace DecklistProjectASP.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Card",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CardId = table.Column<int>(nullable: false),
+                    CardName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Card", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Decklists",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    nameOfDeck = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Decklists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,6 +180,30 @@ namespace DecklistProjectASP.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CardsDecklists",
+                columns: table => new
+                {
+                    CardId = table.Column<int>(nullable: false),
+                    DecklistId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CardsDecklists", x => new { x.CardId, x.DecklistId });
+                    table.ForeignKey(
+                        name: "FK_CardsDecklists_Decklists_CardId",
+                        column: x => x.CardId,
+                        principalTable: "Decklists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CardsDecklists_Card_DecklistId",
+                        column: x => x.DecklistId,
+                        principalTable: "Card",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -191,6 +242,11 @@ namespace DecklistProjectASP.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CardsDecklists_DecklistId",
+                table: "CardsDecklists",
+                column: "DecklistId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -211,10 +267,19 @@ namespace DecklistProjectASP.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CardsDecklists");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Decklists");
+
+            migrationBuilder.DropTable(
+                name: "Card");
         }
     }
 }
