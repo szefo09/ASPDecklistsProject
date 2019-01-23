@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DecklistProjectASP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190121154849_DecklistsAdd")]
-    partial class DecklistsAdd
+    [Migration("20190123161609_update")]
+    partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -55,7 +55,9 @@ namespace DecklistProjectASP.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("nameOfDeck");
+                    b.Property<string>("DecklistData");
+
+                    b.Property<string>("NameOfDeck");
 
                     b.HasKey("Id");
 

@@ -53,7 +53,9 @@ namespace DecklistProjectASP.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("nameOfDeck");
+                    b.Property<string>("DecklistData");
+
+                    b.Property<string>("NameOfDeck");
 
                     b.HasKey("Id");
 

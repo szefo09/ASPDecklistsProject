@@ -10,7 +10,7 @@ namespace DecklistProjectASP.Models
     {
         public int Id { get; set; }
         public string NameOfDeck { get; set; }
-
+        public string DecklistData { get;set; }
         public ICollection<CardsDecklists> CardsDecklists { get; set; }
     }
 }

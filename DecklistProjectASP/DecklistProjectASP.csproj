@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DecklistProjectASP.Migrations
 {
-    public partial class DecklistsAdd : Migration
+    public partial class update : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -67,7 +67,8 @@ namespace DecklistProjectASP.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    nameOfDeck = table.Column<string>(nullable: true)
+                    NameOfDeck = table.Column<string>(nullable: true),
+                    DecklistData = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
