@@ -44,7 +44,13 @@ namespace DecklistProjectASP.Controllers
                 return NotFound();
             }
 
-            return View(decklist);
+            DecklistDisplay decklistDisplay = new DecklistDisplay
+            {
+                Deck = await FromYDKToCodedDeck.Convert(decklist.DecklistData),
+                DeckName = decklist.DeckName,
+                Id = decklist.Id
+            };
+            return View(decklistDisplay);
         }
 
         // GET: Decklists/Create
@@ -59,7 +65,7 @@ namespace DecklistProjectASP.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(DecklistUpload decklistUpload)
+        public async Task<IActionResult> Create(DecklistUpload DecklistUpload)
         {
             if (!ModelState.IsValid)
             {
@@ -72,7 +78,7 @@ namespace DecklistProjectASP.Controllers
             }
             Decklist decklist = new Decklist()
             {
-                NameOfDeck = DecklistUpload.DecklistName,
+                DeckName = DecklistUpload.DecklistName,
                 DecklistData = DecklistaData
             };
                 _context.Add(decklist);

@@ -1,4 +1,4 @@
-﻿@model DecklistProjectASP.Models.Decklist
+﻿@model DecklistProjectASP.ViewModel.DecklistDisplay
 
 @{
     ViewData["Title"] = "Details";
@@ -11,11 +11,45 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.NameOfDeck)
+            @Html.DisplayNameFor(model => model.DeckName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.NameOfDeck)
+            @Html.DisplayFor(model => model.DeckName)
         </dd>
+        @if (Model.Deck.Main.Count > 0)
+        {
+            <dt>
+                @Html.DisplayName($"Main deck ({Model.Deck.Main.Count})")
+            </dt>
+            @foreach (int extra in Model.Deck.Extra)
+            {
+                <dd>
+                    @extra
+                </dd>
+            }}
+        @if (Model.Deck.Extra.Count > 0)
+        {
+            <dt>
+                @Html.DisplayName($"Extra deck ({Model.Deck.Extra.Count})")
+            </dt>
+            @foreach (int extra in Model.Deck.Extra)
+            {
+                <dd>
+                    @extra
+                </dd>
+            }}
+        @if (Model.Deck.Side.Count > 0)
+        {
+            <dt>
+                @Html.DisplayName($"Side deck ({Model.Deck.Side.Count})")
+            </dt>
+            @foreach (int side in Model.Deck.Side)
+            {
+                <dd>
+                    @side
+                </dd>
+            }}
+
     </dl>
 </div>
 <div>

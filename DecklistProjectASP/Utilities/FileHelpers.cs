@@ -34,10 +34,10 @@ namespace DecklistProjectASP.Utilities
             var fileName = WebUtility.HtmlEncode(
             Path.GetFileName(formFile.FileName));
 
-            if (formFile.ContentType.ToLower() != "text/plain")
+            if (Path.GetExtension(formFile.FileName)!=".ydk")
             {
-                modelState.AddModelError(formFile.Name,
-                    $"The {fieldDisplayName}file ({fileName}) must be a text file.");
+               modelState.AddModelError(formFile.Name,
+                   $"The {fieldDisplayName}file ({fileName}) must be a .ydk file.");
             }
 
             if (formFile.Length == 0)
