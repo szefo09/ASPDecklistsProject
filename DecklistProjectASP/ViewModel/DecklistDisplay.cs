@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DecklistProjectASP.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace DecklistProjectASP.ViewModel
         public string DeckName { get; set; }
         [Display(Name = "Decklist:")]
         public Deck Deck { get; set; }
+        public ICollection<Card> Cards { get; set; }
     }
 }

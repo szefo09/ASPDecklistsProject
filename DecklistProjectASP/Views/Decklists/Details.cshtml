@@ -2,16 +2,20 @@
 
 @{
     ViewData["Title"] = "Details";
+    string missingPicPath = "~/apiPics/missing.jpg";
+    string PicPath = "";
 }
 
 <h2>Details</h2>
 
 <div>
     <h4>Decklist</h4>
+    @Html.Label(Environment.CurrentDirectory)
     <hr />
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.DeckName)
+
         </dt>
         <dd>
             @Html.DisplayFor(model => model.DeckName)
@@ -21,12 +25,13 @@
             <dt>
                 @Html.DisplayName($"Main deck ({Model.Deck.Main.Count})")
             </dt>
-            @foreach (int extra in Model.Deck.Extra)
+            @foreach (int main in Model.Deck.Main)
             {
+                if (Model.Cards.FirstOrDefault(x => x.CardIdentifier == main) != null) { PicPath = Model.Cards.FirstOrDefault(x => x.CardIdentifier == main).CardArtPath; } else { PicPath = missingPicPath; }
                 <dd>
-                    @extra
+                    <img src="../../@PicPath" />
                 </dd>
-            }}
+            }            }
         @if (Model.Deck.Extra.Count > 0)
         {
             <dt>
@@ -37,7 +42,7 @@
                 <dd>
                     @extra
                 </dd>
-            }}
+            }            }
         @if (Model.Deck.Side.Count > 0)
         {
             <dt>

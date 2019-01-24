@@ -18,19 +18,23 @@ namespace DecklistProjectASP.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IFileHelpers _fileHelpers;
         private readonly IFromYDKToCodedDeck _fromYDKToCodedDeck;
+        private readonly ILoadCardsFromId _loadCardsFromId;
 
-        public DecklistsController(ApplicationDbContext context,IFileHelpers fileHelpers,IFromYDKToCodedDeck fromYDKToCodedDeck)
+        public DecklistsController(ApplicationDbContext context,IFileHelpers fileHelpers,IFromYDKToCodedDeck fromYDKToCodedDeck,ILoadCardsFromId loadCardsFromId)
         {
             _context = context;
             _fileHelpers = fileHelpers;
             _fromYDKToCodedDeck = fromYDKToCodedDeck;
+            _loadCardsFromId = loadCardsFromId;
         }
         [BindProperty]
         public DecklistUpload DecklistUpload { get; set; }
         // GET: Decklists
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Decklists.ToListAsync());
+            var decklists = await _context.Decklists.ToListAsync();
+            //showcase random decklist.
+            return View(decklists);
         }
         // GET: Decklists/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -46,12 +50,15 @@ namespace DecklistProjectASP.Controllers
             {
                 return NotFound();
             }
+            Deck deck = _fromYDKToCodedDeck.Convert(decklist.DecklistData);
+
             DecklistDisplay decklistDisplay = new DecklistDisplay
             {
-                
-                Deck = _fromYDKToCodedDeck.Convert(decklist.DecklistData),
+
+                Deck = deck,
                 DeckName = decklist.DeckName,
-                Id = decklist.DecklistId
+                Id = decklist.DecklistId,
+                Cards = await _loadCardsFromId.Load(_context.Card.ToList(), deck.FullDeck)
             };
             return View(decklistDisplay);
         }

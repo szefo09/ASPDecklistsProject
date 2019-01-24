@@ -19,8 +19,11 @@ namespace DecklistProjectASP.Controllers
         public CardsController(ApplicationDbContext context,ICardDataAPI cardDataAPI)
         {
             _context = context;
+            _context.Card.RemoveRange(_context.Card.ToList());
+            _context.SaveChanges();
             _cardDataAPI = cardDataAPI;
             List<Card> result = _cardDataAPI.GetCardListFromAPI().Result;
+
             var entitiesExist = from ent in _context.Card
                                 where result.Any(add => ent.CardIdentifier.Equals(add.CardIdentifier))
                                 select ent;

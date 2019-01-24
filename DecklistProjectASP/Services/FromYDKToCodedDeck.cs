@@ -43,24 +43,22 @@ namespace DecklistProjectASP.Services
                         }
                         if (code > 100)
                         {
+                            deck.FullDeck.Add(code);
                             switch (flag)
                             {
                                 case 1:
                                     {
                                         deck.Main.Add(code);
-                                        deck.Deck_O.Main.Add(code);
                                     }
                                     break;
                                 case 2:
                                     {
                                         deck.Extra.Add(code);
-                                        deck.Deck_O.Extra.Add(code);
                                     }
                                     break;
                                 case 3:
                                     {
                                         deck.Side.Add(code);
-                                        deck.Deck_O.Side.Add(code);
                                     }
                                     break;
                                 default:

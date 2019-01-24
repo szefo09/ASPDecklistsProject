@@ -30,6 +30,7 @@ namespace DecklistProjectASP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<ILoadCardsFromId, LoadCardsFromId>();
             services.AddScoped<ICardDataAPI, CardDataAPI>();
             services.AddScoped<IFileHelpers, FileHelpers>();
             services.AddScoped<IFromYDKToCodedDeck, FromYDKToCodedDeck>();
