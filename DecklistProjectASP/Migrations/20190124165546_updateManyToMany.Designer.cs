@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DecklistProjectASP.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190123161609_update")]
-    partial class update
+    [Migration("20190124165546_updateManyToMany")]
+    partial class updateManyToMany
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,43 +23,45 @@ namespace DecklistProjectASP.Migrations
 
             modelBuilder.Entity("DecklistProjectASP.Models.Card", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CardId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CardId");
+                    b.Property<string>("CardArtPath");
 
                     b.Property<string>("CardName");
 
-                    b.HasKey("Id");
+                    b.HasKey("CardId");
 
                     b.ToTable("Card");
                 });
 
             modelBuilder.Entity("DecklistProjectASP.Models.CardsDecklists", b =>
                 {
-                    b.Property<int>("CardId");
-
                     b.Property<int>("DecklistId");
 
-                    b.HasKey("CardId", "DecklistId");
+                    b.Property<int>("CardId");
 
-                    b.HasIndex("DecklistId");
+                    b.HasKey("DecklistId", "CardId");
 
-                    b.ToTable("CardsDecklists");
+                    b.HasIndex("CardId");
+
+                    b.ToTable("CardsDecklist");
                 });
 
             modelBuilder.Entity("DecklistProjectASP.Models.Decklist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DecklistId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("DeckName");
+
                     b.Property<string>("DecklistData");
 
-                    b.Property<string>("NameOfDeck");
+                    b.Property<string>("OwnerID");
 
-                    b.HasKey("Id");
+                    b.HasKey("DecklistId");
 
                     b.ToTable("Decklists");
                 });
@@ -231,12 +233,12 @@ namespace DecklistProjectASP.Migrations
 
             modelBuilder.Entity("DecklistProjectASP.Models.CardsDecklists", b =>
                 {
-                    b.HasOne("DecklistProjectASP.Models.Decklist", "Decklist")
-                        .WithMany("CardsDecklists")
+                    b.HasOne("DecklistProjectASP.Models.Card", "Card")
+                        .WithMany()
                         .HasForeignKey("CardId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("DecklistProjectASP.Models.Card", "Card")
+                    b.HasOne("DecklistProjectASP.Models.Decklist", "Decklist")
                         .WithMany("CardsDecklists")
                         .HasForeignKey("DecklistId")
                         .OnDelete(DeleteBehavior.Cascade);

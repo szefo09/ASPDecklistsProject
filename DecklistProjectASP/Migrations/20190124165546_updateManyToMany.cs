@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DecklistProjectASP.Migrations
 {
-    public partial class update : Migration
+    public partial class updateManyToMany : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,28 +51,29 @@ namespace DecklistProjectASP.Migrations
                 name: "Card",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    CardId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CardId = table.Column<int>(nullable: false),
-                    CardName = table.Column<string>(nullable: true)
+                    CardName = table.Column<string>(nullable: true),
+                    CardArtPath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Card", x => x.Id);
+                    table.PrimaryKey("PK_Card", x => x.CardId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Decklists",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    DecklistId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    NameOfDeck = table.Column<string>(nullable: true),
+                    OwnerID = table.Column<string>(nullable: true),
+                    DeckName = table.Column<string>(nullable: true),
                     DecklistData = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Decklists", x => x.Id);
+                    table.PrimaryKey("PK_Decklists", x => x.DecklistId);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,7 +183,7 @@ namespace DecklistProjectASP.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CardsDecklists",
+                name: "CardsDecklist",
                 columns: table => new
                 {
                     CardId = table.Column<int>(nullable: false),
@@ -190,18 +191,18 @@ namespace DecklistProjectASP.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CardsDecklists", x => new { x.CardId, x.DecklistId });
+                    table.PrimaryKey("PK_CardsDecklist", x => new { x.DecklistId, x.CardId });
                     table.ForeignKey(
-                        name: "FK_CardsDecklists_Decklists_CardId",
+                        name: "FK_CardsDecklist_Card_CardId",
                         column: x => x.CardId,
-                        principalTable: "Decklists",
-                        principalColumn: "Id",
+                        principalTable: "Card",
+                        principalColumn: "CardId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CardsDecklists_Card_DecklistId",
+                        name: "FK_CardsDecklist_Decklists_DecklistId",
                         column: x => x.DecklistId,
-                        principalTable: "Card",
-                        principalColumn: "Id",
+                        principalTable: "Decklists",
+                        principalColumn: "DecklistId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -245,9 +246,9 @@ namespace DecklistProjectASP.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CardsDecklists_DecklistId",
-                table: "CardsDecklists",
-                column: "DecklistId");
+                name: "IX_CardsDecklist_CardId",
+                table: "CardsDecklist",
+                column: "CardId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -268,7 +269,7 @@ namespace DecklistProjectASP.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CardsDecklists");
+                name: "CardsDecklist");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -277,10 +278,10 @@ namespace DecklistProjectASP.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Decklists");
+                name: "Card");
 
             migrationBuilder.DropTable(
-                name: "Card");
+                name: "Decklists");
         }
     }
 }

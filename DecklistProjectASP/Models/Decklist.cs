@@ -9,7 +9,8 @@ namespace DecklistProjectASP.Models
 {
     public class Decklist
     {
-        public int Id { get; set; }
+        public int DecklistId { get; set; }
+        public string OwnerID { get; set; }
         [Display(Name = "Decklist Name")]
         public string DeckName { get; set; }
         public string DecklistData { get;set; }

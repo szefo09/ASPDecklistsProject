@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DecklistProjectASP.Utilities
+namespace DecklistProjectASP.Services
 {
-    public class FromYDKToCodedDeck
+    public class FromYDKToCodedDeck : IFromYDKToCodedDeck
     {
-        public static async Task<Deck> Convert(string ydkText)
+        public Deck Convert(string ydkText)
         {
             Deck deck = new Deck();
             try

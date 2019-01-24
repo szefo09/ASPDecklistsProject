@@ -12,15 +12,15 @@ namespace DecklistProjectASP.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<CardsDecklists>().HasKey(cd => new { cd.CardId, cd.DecklistId });
-            modelBuilder.Entity<CardsDecklists>().HasOne(cd => cd.Card).WithMany(c => c.CardsDecklists).HasForeignKey(cd => cd.DecklistId);
-            modelBuilder.Entity<CardsDecklists>().HasOne(cd => cd.Decklist).WithMany(d => d.CardsDecklists).HasForeignKey(cd => cd.CardId);
+            base.OnModelCreating(builder);
+            builder.Entity<CardsDecklists>().HasKey(cd => new { cd.DecklistId, cd.CardId });
         }
         public DbSet<Decklist> Decklists { get; set; }
         public DbSet<Card> Card { get; set; }
+        public DbSet<CardsDecklists> CardsDecklist { get; set; }
     }
 }

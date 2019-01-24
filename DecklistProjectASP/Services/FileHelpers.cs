@@ -11,11 +11,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DecklistProjectASP.Utilities
+namespace DecklistProjectASP.Services
 {
-    public class FileHelpers
+    public class FileHelpers : IFileHelpers
     {
-        public static async Task<string> ProcessFormFile(IFormFile formFile,
+        public async Task<string> ProcessFormFile(IFormFile formFile,
             ModelStateDictionary modelState)
         {
             var fieldDisplayName = string.Empty;
