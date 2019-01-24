@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace DecklistProjectASP.Services
 {
-    public class CardDataAPI
+    public class CardDataAPI : ICardDataAPI
     {
-        public async Task AddAPICardsToDB(ApplicationDbContext db)
+        public async Task<List<Card>> GetCardListFromAPI()
         {
             List<ApiCard> deserializedCards = new List<ApiCard>();
             using (var client = new HttpClient())
             {
-                HttpResponseMessage response = client.GetAsync("https://db.ygoprodeck.com/api/v2/cardinfo.php?archetype=Blue-Eyes").Result;
+                HttpResponseMessage response = client.GetAsync("https://db.ygoprodeck.com/api/v2/cardinfo.php").Result;
                 if (response.IsSuccessStatusCode)
                 {
                     string CardsJsonString =await response.Content.ReadAsStringAsync();
@@ -27,17 +27,19 @@ namespace DecklistProjectASP.Services
                     deserializedCards.AddRange(JsonConvert.DeserializeObject<List<ApiCard>>(CardsJsonString));
                 }
             }
+            List<Card> cards = new List<Card>();
             foreach (var c in deserializedCards)
             {
                 Card card = new Card()
                 {
                     CardName = c.name,
-                    CardId = Convert.ToInt32(c.id),
+                    CardIdentifier = Convert.ToInt32(c.id),
                     CardArtPath = "apiPics/" + c.id + ".jpg",
                     IsCardArtDownloaded = false
-
                 };
+                cards.Add(card);
             }
+            return cards;
         }
     }
 }

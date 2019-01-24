@@ -9,6 +9,7 @@ namespace DecklistProjectASP.Models
     public class Card
     {
         public int CardId { get; set; }
+        public int CardIdentifier { get; set; }
         public string CardName { get; set; }
         public string CardArtPath { get; set; }
         [NotMapped]

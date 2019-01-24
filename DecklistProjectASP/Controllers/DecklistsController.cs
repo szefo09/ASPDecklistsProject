@@ -24,8 +24,6 @@ namespace DecklistProjectASP.Controllers
             _context = context;
             _fileHelpers = fileHelpers;
             _fromYDKToCodedDeck = fromYDKToCodedDeck;
-            CardDataAPI api = new CardDataAPI();
-            api.AddAPICardsToDB(_context);
         }
         [BindProperty]
         public DecklistUpload DecklistUpload { get; set; }

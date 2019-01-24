@@ -1,0 +1,36 @@
+﻿@model DecklistProjectASP.Models.Card
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Card</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CardIdentifier)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardIdentifier)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CardName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CardArtPath)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CardArtPath)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.CardId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
