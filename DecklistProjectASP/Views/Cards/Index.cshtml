@@ -9,6 +9,9 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<p>
+    <a asp-action="Update">Download new Card Database From API</a>
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -17,9 +20,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CardName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CardArtPath)
             </th>
             <th></th>
         </tr>
@@ -32,9 +32,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CardName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CardArtPath)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |

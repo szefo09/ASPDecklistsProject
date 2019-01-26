@@ -34,8 +34,6 @@ namespace DecklistProjectASP.Services
                 {
                     CardName = c.name,
                     CardIdentifier = Convert.ToInt32(c.id),
-                    CardArtPath = "apiPics/" + c.id + ".jpg",
-                    IsCardArtDownloaded = false
                 };
                 cards.Add(card);
             }

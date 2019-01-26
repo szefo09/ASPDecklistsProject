@@ -2,15 +2,14 @@
 
 @{
     ViewData["Title"] = "Details";
-    string missingPicPath = "~/apiPics/missing.jpg";
-    string PicPath = "";
+    string cardWebsite = "https://db.ygoprodeck.com/card/?search=";
 }
+
 
 <h2>Details</h2>
 
 <div>
     <h4>Decklist</h4>
-    @Html.Label(Environment.CurrentDirectory)
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -25,39 +24,61 @@
             <dt>
                 @Html.DisplayName($"Main deck ({Model.Deck.Main.Count})")
             </dt>
-            @foreach (int main in Model.Deck.Main)
+            @foreach (var main in Model.Deck.Main.Distinct())
             {
-                if (Model.Cards.FirstOrDefault(x => x.CardIdentifier == main) != null) { PicPath = Model.Cards.FirstOrDefault(x => x.CardIdentifier == main).CardArtPath; } else { PicPath = missingPicPath; }
-                <dd>
-                    <img src="../../@PicPath" />
-                </dd>
-            }            }
+                var cardWithAmount = Model.Cards.FirstOrDefault(x => x.Card.CardIdentifier == main);
+                if (cardWithAmount != null)
+                {
+                    <dd>
+                        @{
+                            <span>(@(cardWithAmount.Amount)x)   <a href="@cardWebsite@cardWithAmount.Card.CardIdentifier">@cardWithAmount.Card.CardName</a> </span>
+                        }
+                    </dd>
+                }
+
+            }
+        }
+
         @if (Model.Deck.Extra.Count > 0)
         {
             <dt>
                 @Html.DisplayName($"Extra deck ({Model.Deck.Extra.Count})")
             </dt>
-            @foreach (int extra in Model.Deck.Extra)
+            @foreach (int extra in Model.Deck.Extra.Distinct())
             {
-                <dd>
-                    @extra
-                </dd>
-            }            }
+                var cardWithAmount = Model.Cards.FirstOrDefault(x => x.Card.CardIdentifier == extra);
+                if (cardWithAmount != null)
+                {
+                    <dd>
+                        @{
+                            <span>(@(cardWithAmount.Amount)x)   <a href="@cardWebsite@cardWithAmount.Card.CardIdentifier">@cardWithAmount.Card.CardName</a> </span>
+                        }
+                    </dd>
+                }
+            }
+        }
         @if (Model.Deck.Side.Count > 0)
         {
             <dt>
                 @Html.DisplayName($"Side deck ({Model.Deck.Side.Count})")
             </dt>
-            @foreach (int side in Model.Deck.Side)
+            @foreach (int side in Model.Deck.Side.Distinct())
             {
-                <dd>
-                    @side
-                </dd>
-            }}
+                var cardWithAmount = Model.Cards.FirstOrDefault(x => x.Card.CardIdentifier == side);
+                if (cardWithAmount != null)
+                {
+                    <dd>
+                        @{
+                            <span>(@(cardWithAmount.Amount)x)   <a href="@cardWebsite@cardWithAmount.Card.CardIdentifier">@cardWithAmount.Card.CardName</a> </span>
+                        }
+                    </dd>
+                }
+            }
+        }
 
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <p><a asp-action="Edit" asp-route-id="@Model.Id">Edit</a></p>
+    <p><a asp-action="Index">Back to List</a></p>
 </div>

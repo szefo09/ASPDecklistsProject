@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DecklistProjectASP.Data;
 using DecklistProjectASP.Models;
-using DecklistProjectASP.Services;
 using DecklistProjectASP.ViewModel;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
+using DecklistProjectASP.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DecklistProjectASP.Controllers
 {
@@ -20,38 +19,23 @@ namespace DecklistProjectASP.Controllers
         private readonly IFileHelpers _fileHelpers;
         private readonly IFromYDKToCodedDeck _fromYDKToCodedDeck;
         private readonly ILoadCardsFromId _loadCardsFromId;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public DecklistsController(ApplicationDbContext context, IFileHelpers fileHelpers, IFromYDKToCodedDeck fromYDKToCodedDeck, ILoadCardsFromId loadCardsFromId, UserManager<IdentityUser> userManager)
+        public DecklistsController(ApplicationDbContext context,IFileHelpers fileHelpers,IFromYDKToCodedDeck fromYDKToCodedDeck,ILoadCardsFromId loadCardsFromId)
         {
             _context = context;
             _fileHelpers = fileHelpers;
             _fromYDKToCodedDeck = fromYDKToCodedDeck;
             _loadCardsFromId = loadCardsFromId;
-            _userManager = userManager;
         }
-
+        [BindProperty]
+        public DecklistUpload DecklistUpload { get; set; }
         // GET: Decklists
         public async Task<IActionResult> Index()
         {
-            List<DeckView> deckViews = new List<DeckView>();
-            foreach(Decklist deck in _context.Decklists.ToList())
-            {
-                string user = _context.Users.Find(deck.OwnerID).UserName;
-                deckViews.Add(new DeckView()
-                {
-                    Deck = deck,
-                    OwnerName = user
-                });
-            }
-            if (User.IsInRole("Admin"))
-            {
-                return View(deckViews);
-            }
-            return View(deckViews.Where(x=>x.Deck.OwnerID == GetCurrentUserAsync().Result.Id));
+            var decklists = await _context.Decklists.ToListAsync();
+            //showcase random decklist.
+            return View(decklists);
         }
-        private Task<IdentityUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
-
         // GET: Decklists/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -70,15 +54,16 @@ namespace DecklistProjectASP.Controllers
 
             DecklistDisplay decklistDisplay = new DecklistDisplay
             {
+
                 Deck = deck,
                 DeckName = decklist.DeckName,
                 Id = decklist.DecklistId,
                 Cards = await _loadCardsFromId.Load(_context.Card.ToList(), deck.FullDeck)
-            };
 
+            };
+            
             return View(decklistDisplay);
         }
-
         // GET: Decklists/Create
         public IActionResult Create()
         {
@@ -102,38 +87,16 @@ namespace DecklistProjectASP.Controllers
             {
                 return View(DecklistUpload);
             }
-            List<CardsDecklists> cardsDecklists = new List<CardsDecklists>();
-            
             Decklist decklist = new Decklist()
             {
                 DeckName = DecklistUpload.DecklistName,
-                DecklistData = DecklistaData,
-                OwnerID= GetCurrentUserAsync().Result.Id
+                DecklistData = DecklistaData
             };
-            List<CardWithAmount> Cards = await _loadCardsFromId.Load(_context.Card.ToList(),_fromYDKToCodedDeck.Convert(DecklistaData).FullDeck);
-            foreach (int card in _fromYDKToCodedDeck.Convert(DecklistaData).FullDeck.Distinct())
-            {
-                try
-                {
-                    cardsDecklists.Add(new CardsDecklists()
-                    {
-                        Card = Cards.Find(x => x.Card.CardIdentifier == card).Card,
-                        CardId = Cards.Find(x => x.Card.CardIdentifier == card).Card.CardId,
-                        Decklist = decklist,
-                        DecklistId = decklist.DecklistId
-                    });
-                }
-                catch
-                {
-                    return View(DecklistUpload);
-                }
-            }
-            _context.AddRange(cardsDecklists);
-            _context.Add(decklist);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                _context.Add(decklist);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            
         }
-
         // GET: Decklists/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -143,41 +106,34 @@ namespace DecklistProjectASP.Controllers
             }
 
             var decklist = await _context.Decklists.FindAsync(id);
-            DeckEdit de = new DeckEdit()
-            {
-                DecklistId = decklist.DecklistId,
-                DeckName = decklist.DeckName
-            };
             if (decklist == null)
             {
                 return NotFound();
             }
-            return View(de);
+            return View(decklist);
         }
-
         // POST: Decklists/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(DeckEdit decklist)
+        public async Task<IActionResult> Edit(int id, Decklist decklist)
         {
-            //if (id != decklist.DecklistId)
-            //{
-            //    return NotFound();
-            //}
-            Decklist decklistInDB = _context.Decklists.First(x => x.DecklistId == decklist.DecklistId);
-            if (ModelState.IsValid && decklistInDB.OwnerID == GetCurrentUserAsync().Result.Id)
+            if (id != decklist.DecklistId)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    decklistInDB.DeckName = decklist.DeckName;
-                    _context.Update(decklistInDB);
+                    _context.Update(decklist);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DecklistExists(decklistInDB.DecklistId))
+                    if (!DecklistExists(decklist.DecklistId))
                     {
                         return NotFound();
                     }
@@ -190,7 +146,6 @@ namespace DecklistProjectASP.Controllers
             }
             return View(decklist);
         }
-
         // GET: Decklists/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -208,7 +163,6 @@ namespace DecklistProjectASP.Controllers
 
             return View(decklist);
         }
-
         // POST: Decklists/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -219,7 +173,6 @@ namespace DecklistProjectASP.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool DecklistExists(int id)
         {
             return _context.Decklists.Any(e => e.DecklistId == id);

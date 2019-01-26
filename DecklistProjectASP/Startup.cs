@@ -44,26 +44,28 @@ namespace DecklistProjectASP
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             //services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>()
-            services.AddDefaultIdentity<IdentityUser>(
-               option =>
-               {
-                   option.Password.RequireDigit = false;
-                   option.Password.RequiredLength = 6;
-                   option.Password.RequireNonAlphanumeric = false;
-                   option.Password.RequireUppercase = false;
-                   option.Password.RequireLowercase = false;
-               }).AddRoles<IdentityRole>()
-           .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddMvc(config=> {
-                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
+            services.AddIdentity<IdentityUser, IdentityRole>(
+            option =>
+            {
+                option.Password.RequireDigit = false;
+                option.Password.RequiredLength = 6;
+                option.Password.RequireNonAlphanumeric = false;
+                option.Password.RequireUppercase = false;
+                option.Password.RequireLowercase = false;
             })
+            .AddRoleManager<RoleManager<IdentityRole>>()
+            .AddDefaultUI()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddMvc(
+                config=> {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                config.Filters.Add(new AuthorizeFilter(policy));}
+                )
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
@@ -88,6 +90,51 @@ namespace DecklistProjectASP
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            CreateUserRoles(services).Wait();
+        }
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            //initializing custom roles   
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            string[] roleNames = { "Admin", "User" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            IdentityUser user = await UserManager.FindByEmailAsync("admin@decklist.net");
+
+            if (user == null)
+            {
+                user = new IdentityUser()
+                {
+                    UserName = "admin@decklist.net",
+                    Email = "admin@decklist.net",
+                };
+                await UserManager.CreateAsync(user, "adminYGO");
+            }
+            await UserManager.AddToRoleAsync(user, "Admin");
+
+
+            IdentityUser user1 = await UserManager.FindByEmailAsync("user@decklist.net");
+
+            if (user1 == null)
+            {
+                user1 = new IdentityUser()
+                {
+                    UserName = "user@decklist.net",
+                    Email = "user@decklist.net",
+                };
+                await UserManager.CreateAsync(user1, "userYGO");
+            }
+            await UserManager.AddToRoleAsync(user1, "User");
         }
     }
 }

@@ -7,30 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DecklistProjectASP.Data;
 using DecklistProjectASP.Models;
+using Microsoft.AspNetCore.Authorization;
 using DecklistProjectASP.Services;
 
 namespace DecklistProjectASP.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CardsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ICardDataAPI _cardDataAPI;
 
-        public CardsController(ApplicationDbContext context,ICardDataAPI cardDataAPI)
+        public CardsController(ApplicationDbContext context, ICardDataAPI cardDataAPI)
         {
             _context = context;
+            _cardDataAPI = cardDataAPI;
+        }
+        public async Task<IActionResult> Update()
+        {
             _context.Card.RemoveRange(_context.Card.ToList());
             _context.SaveChanges();
-            _cardDataAPI = cardDataAPI;
             List<Card> result = _cardDataAPI.GetCardListFromAPI().Result;
 
             var entitiesExist = from ent in _context.Card
                                 where result.Any(add => ent.CardIdentifier.Equals(add.CardIdentifier))
                                 select ent;
             _context.AddRange(result.Except(entitiesExist));
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
-
         // GET: Cards
         public async Task<IActionResult> Index()
         {
@@ -66,7 +71,7 @@ namespace DecklistProjectASP.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CardId,CardIdentifier,CardName,CardArtPath")] Card card)
+        public async Task<IActionResult> Create([Bind("CardId,CardIdentifier,CardName")] Card card)
         {
             if (ModelState.IsValid)
             {
@@ -98,7 +103,7 @@ namespace DecklistProjectASP.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CardId,CardIdentifier,CardName,CardArtPath")] Card card)
+        public async Task<IActionResult> Edit(int id, [Bind("CardId,CardIdentifier,CardName")] Card card)
         {
             if (id != card.CardId)
             {

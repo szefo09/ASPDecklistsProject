@@ -14,6 +14,13 @@ namespace DecklistProjectASP.ViewModel
         public string DeckName { get; set; }
         [Display(Name = "Decklist:")]
         public Deck Deck { get; set; }
-        public ICollection<Card> Cards { get; set; }
+        public ICollection<CardWithAmount> Cards { get; set; }
+    }
+    public class CardWithAmount
+    {
+        public Card Card { get; set; }
+        public int Amount { get; set; }
+
     }
 }
+

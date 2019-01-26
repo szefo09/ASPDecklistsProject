@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DecklistProjectASP.Models.Decklist>
+﻿@model IEnumerable<DecklistProjectASP.ViewModel.DeckView>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,22 +12,36 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DeckName)
-            </th>
-            <th></th>
-        </tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.OwnerName)
+                </th>
+            }
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Deck)
+                </th>
+            </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+
+            @if (User.IsInRole("Admin"))
+            {
             <td>
-                @Html.DisplayFor(modelItem => item.DeckName)
+                @Html.DisplayFor(modelItem => item.OwnerName)
+            </td>
+            }
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Deck.DeckName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.DecklistId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DecklistId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DecklistId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Deck.DecklistId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Deck.DecklistId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Deck.DecklistId">Delete</a>
             </td>
         </tr>
 }
