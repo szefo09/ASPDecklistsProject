@@ -9,7 +9,9 @@ namespace DecklistProjectASP.ViewModel
     public class DeckEdit
     {
         public int DecklistId { get; set; }
-        [Display(Name = "Decklist Name")]
+        [Display(Name = "Decklist Name:")]
         public string DeckName { get; set; }
+        [Display(Name = "Show Decklist as Public:")]
+        public bool isPublic { get; set; }
     }
 }

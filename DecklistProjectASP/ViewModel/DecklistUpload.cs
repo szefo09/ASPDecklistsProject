@@ -7,11 +7,13 @@ namespace DecklistProjectASP.ViewModel
     public class DecklistUpload
     {
         [Required]
-        [Display(Name = "Decklist Name")]
+        [Display(Name = "Decklist Name:")]
         [StringLength(60, MinimumLength = 3)]
         public string DecklistName { get; set; }
         [Required]
-        [Display(Name = "Decklist File")]
+        [Display(Name = "Decklist File:")]
         public IFormFile DecklistFile { get; set; }
+        [Display(Name = "Show Decklist as Public:")]
+        public bool isPublic { get; set; }
     }
 }

@@ -25,13 +25,14 @@ namespace DecklistProjectASP.Controllers
         }
         public async Task<IActionResult> Update()
         {
-            _context.Card.RemoveRange(_context.Card.ToList());
-            _context.SaveChanges();
+            //_context.Card.RemoveRange(_context.Card.ToList());
+           //_context.SaveChanges();
             List<Card> result = _cardDataAPI.GetCardListFromAPI().Result;
 
             var entitiesExist = from ent in _context.Card
                                 where result.Any(add => ent.CardIdentifier.Equals(add.CardIdentifier))
                                 select ent;
+            //Add new cards
             _context.AddRange(result.Except(entitiesExist));
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -39,7 +40,7 @@ namespace DecklistProjectASP.Controllers
         // GET: Cards
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Card.ToListAsync());
+            return View(_context.Card.ToList());
         }
 
         // GET: Cards/Details/5

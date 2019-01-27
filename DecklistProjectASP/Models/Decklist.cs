@@ -14,6 +14,7 @@ namespace DecklistProjectASP.Models
         [Display(Name = "Decklist Name")]
         public string DeckName { get; set; }
         public string DecklistData { get;set; }
+        public bool isPublic { get; set; }
         public ICollection<CardsDecklists> CardsDecklists { get; } = new List<CardsDecklists>();
     }
 }

@@ -11,6 +11,8 @@ using DecklistProjectASP.Services;
 using DecklistProjectASP.ViewModel;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DecklistProjectASP.Controllers
 {
@@ -30,7 +32,7 @@ namespace DecklistProjectASP.Controllers
             _loadCardsFromId = loadCardsFromId;
             _userManager = userManager;
         }
-
+        [AllowAnonymous]
         // GET: Decklists
         public async Task<IActionResult> Index()
         {
@@ -48,7 +50,21 @@ namespace DecklistProjectASP.Controllers
             {
                 return View(deckViews);
             }
-            return View(deckViews.Where(x=>x.Deck.OwnerID == GetCurrentUserAsync().Result.Id));
+            return View(deckViews.Where(x=>x.Deck.isPublic));
+        }
+        public async Task<IActionResult> MyDecklistsIndex()
+        {
+            List<DeckView> deckViews = new List<DeckView>();
+            foreach (Decklist deck in _context.Decklists.ToList())
+            {
+                string user = _context.Users.Find(deck.OwnerID).UserName;
+                deckViews.Add(new DeckView()
+                {
+                    Deck = deck,
+                    OwnerName = user
+                });
+            }
+            return View(deckViews.Where(x => x.Deck.OwnerID == GetCurrentUserAsync().Result.Id));
         }
         private Task<IdentityUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
@@ -108,7 +124,8 @@ namespace DecklistProjectASP.Controllers
             {
                 DeckName = DecklistUpload.DecklistName,
                 DecklistData = DecklistaData,
-                OwnerID= GetCurrentUserAsync().Result.Id
+                OwnerID= GetCurrentUserAsync().Result.Id,
+                isPublic = DecklistUpload.isPublic
             };
             List<CardWithAmount> Cards = await _loadCardsFromId.Load(_context.Card.ToList(),_fromYDKToCodedDeck.Convert(DecklistaData).FullDeck);
             foreach (int card in _fromYDKToCodedDeck.Convert(DecklistaData).FullDeck.Distinct())
@@ -146,6 +163,7 @@ namespace DecklistProjectASP.Controllers
             DeckEdit de = new DeckEdit()
             {
                 DecklistId = decklist.DecklistId,
+                isPublic = decklist.isPublic,
                 DeckName = decklist.DeckName
             };
             if (decklist == null)
@@ -153,6 +171,20 @@ namespace DecklistProjectASP.Controllers
                 return NotFound();
             }
             return View(de);
+        }
+        public async Task<IActionResult> Download(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var decklist = await _context.Decklists.FindAsync(id);
+            if (decklist != null)
+            {
+                return File(Encoding.UTF8.GetBytes(decklist.DecklistData), "text/plain", decklist.DeckName+".ydk");
+            }
+            return View();
         }
 
         // POST: Decklists/Edit/5
@@ -172,6 +204,7 @@ namespace DecklistProjectASP.Controllers
                 try
                 {
                     decklistInDB.DeckName = decklist.DeckName;
+                    decklistInDB.isPublic = decklist.isPublic;
                     _context.Update(decklistInDB);
                     await _context.SaveChangesAsync();
                 }
@@ -188,7 +221,15 @@ namespace DecklistProjectASP.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(decklist);
+            if (decklist.isPublic)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            
         }
 
         // GET: Decklists/Delete/5
@@ -217,7 +258,14 @@ namespace DecklistProjectASP.Controllers
             var decklist = await _context.Decklists.FindAsync(id);
             _context.Decklists.Remove(decklist);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (decklist.isPublic)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool DecklistExists(int id)
@@ -225,6 +273,7 @@ namespace DecklistProjectASP.Controllers
             return _context.Decklists.Any(e => e.DecklistId == id);
         }
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> SearchForCard(CardForSearch cardForSearch)
         {
             List<Card> cardResults = new List<Card>();
@@ -232,6 +281,17 @@ namespace DecklistProjectASP.Controllers
             List<FoundDecklistAndCard> foundDecklistsAndCards = new List<FoundDecklistAndCard>();
             var cards = _context.Card.ToList();
             var decks = _context.Decklists.ToList();
+            if (User.Identity.IsAuthenticated)
+            {
+                if (!User.IsInRole("Admin"))
+                {
+                    decks = decks.FindAll(x => x.isPublic || x.OwnerID == GetCurrentUserAsync().Result.Id);
+                } 
+            }
+            else
+            {
+                decks = decks.FindAll(x => x.isPublic);
+            }
             var cardDecklists = _context.CardsDecklist.ToList();
             var users = _context.Users;
             if (cardForSearch.CardName != null)
@@ -271,7 +331,7 @@ namespace DecklistProjectASP.Controllers
             
             return View("SearchForCardResult", foundDecklistsAndCards.Distinct());
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> SearchForCard()
         {
             return View();

@@ -19,6 +19,13 @@
                 <span asp-validation-for="DeckName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="isPublic" /> @Html.DisplayNameFor(model => model.isPublic)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </form>

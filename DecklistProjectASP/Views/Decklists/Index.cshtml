@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<DecklistProjectASP.ViewModel.DeckView>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Public Decklists";
 }
 
 <h2>Decklists Menu:</h2>
@@ -15,13 +15,9 @@
 <table class="table">
     <thead>
         <tr>
-            @if (User.IsInRole("Admin"))
-            {
                 <th>
                     @Html.DisplayNameFor(model => model.OwnerName)
                 </th>
-            }
-
                 <th>
                     @Html.DisplayNameFor(model => model.Deck)
                 </th>
@@ -31,20 +27,28 @@
 @foreach (var item in Model) {
         <tr>
 
-            @if (User.IsInRole("Admin"))
-            {
             <td>
                 @Html.DisplayFor(modelItem => item.OwnerName)
             </td>
-            }
 
             <td>
                 @Html.DisplayFor(modelItem => item.Deck.DeckName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Deck.DecklistId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Deck.DecklistId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Deck.DecklistId">Delete</a>
+                @if (User.Identity.Name == item.OwnerName || User.IsInRole("Admin"))
+                {
+                    <a asp-action="Details" asp-route-id="@item.Deck.DecklistId">Details</a><span> |</span>
+                    <a asp-action="Download" asp-route-id="@item.Deck.DecklistId">Download YDK</a><span> |</span>
+                    <a asp-action="Edit" asp-route-id="@item.Deck.DecklistId">Edit</a><span> |</span>
+                    <a asp-action="Delete" asp-route-id="@item.Deck.DecklistId">Delete</a>
+                }
+                else
+                {
+                    <a asp-action="Details" asp-route-id="@item.Deck.DecklistId">Details</a><span> |</span>
+                    <a asp-action="Download" asp-route-id="@item.Deck.DecklistId">Download YDK</a>
+                }
+
+
             </td>
         </tr>
 }

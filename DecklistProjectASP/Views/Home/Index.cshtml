@@ -1,3 +1,18 @@
-﻿@{
+﻿@model DecklistProjectASP.ViewModel.DecksUsersAmount
+@{
     ViewData["Title"] = "Home Page";
 }
+
+
+<div class="jumbotron jumbotron-fluid">
+    <div class="container-fluid">
+        <h2 class="text-center display-2">Welcome to YGOPro Deck Archiver</h2>
+        <h4 class="text-center text-primary bg-light lead">
+            Currently our database stores @Model.DecksAmount Decklists submitted by @Model.UsersAmount different users!
+        </h4>
+
+        <p class="text-center">
+            This website let's you share and save your decklists made for YGOPro Dueling Simulator. You can post your own decklists here, or search for user commited decklists.
+        </p>
+    </div>
+</div>
