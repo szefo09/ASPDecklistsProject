@@ -224,5 +224,57 @@ namespace DecklistProjectASP.Controllers
         {
             return _context.Decklists.Any(e => e.DecklistId == id);
         }
+        [HttpPost]
+        public async Task<IActionResult> SearchForCard(CardForSearch cardForSearch)
+        {
+            List<Card> cardResults = new List<Card>();
+            List<Decklist> decksFound = new List<Decklist>();
+            List<FoundDecklistAndCard> foundDecklistsAndCards = new List<FoundDecklistAndCard>();
+            var cards = _context.Card.ToList();
+            var decks = _context.Decklists.ToList();
+            var cardDecklists = _context.CardsDecklist.ToList();
+            var users = _context.Users;
+            if (cardForSearch.CardName != null)
+            {
+                cardResults.AddRange(cards.Where(x => x.CardName.ToLower().Contains(cardForSearch.CardName.ToLower())));
+                //case insensitive search.
+            }
+            else
+            {
+                cardResults.AddRange(cards.Where(x => x.CardIdentifier.ToString().Contains(cardForSearch.CardIdentifier.ToString())));
+            }
+            foreach(var card in cardResults)
+            {
+                foreach(var cd in cardDecklists.FindAll(x => x.Card == card))
+                {
+                    decksFound.AddRange(decks.FindAll(x => x.DecklistId == cd.DecklistId));
+                    foreach(var d in decksFound)
+                    {
+                        var foundDecklist = new FoundDecklistAndCard()
+                        {
+                            Deck = d,
+                            OwnerName = users.Find(d.OwnerID).UserName
+                        };
+                        foundDecklist.CardsFound.Add(card.CardName);
+                        if (foundDecklistsAndCards.FindIndex(x => x.Deck == d) == -1)
+                        {
+                            foundDecklistsAndCards.Add(foundDecklist);
+                        }
+                        else
+                        {
+                            foundDecklistsAndCards.Find(x => x.Deck == d).CardsFound.Add(card.CardName);
+                        }
+                        
+                    }
+                }
+            }
+            
+            return View("SearchForCardResult", foundDecklistsAndCards.Distinct());
+        }
+
+        public async Task<IActionResult> SearchForCard()
+        {
+            return View();
+        }
     }
 }

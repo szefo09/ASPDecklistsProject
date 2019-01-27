@@ -1,0 +1,68 @@
+﻿@model IEnumerable<DecklistProjectASP.ViewModel.FoundDecklistAndCard>
+
+@{
+    ViewData["Title"] = "Search Result: ";
+}
+
+<h2>Search Result: </h2>
+
+<p>
+    <a asp-action="SearchForCard">Search Again</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Deck.OwnerID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OwnerName)
+                </th>
+            }
+
+            <th>
+                @Html.DisplayNameFor(model => model.Deck.DeckName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CardsFound)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.Deck.OwnerID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OwnerName)
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Deck.DeckName)
+            </td>
+            <td>
+                @string.Join(", ", item.CardsFound.Distinct().OrderBy(q=>q))
+            </td>
+            <td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Deck.DecklistId">Edit</a>
+
+                    <a asp-action="Delete" asp-route-id="@item.Deck.DecklistId">Delete</a>
+                }
+                else
+                {
+                    <a asp-action="Details" asp-route-id="@item.Deck.DecklistId">Details</a>
+                }
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
