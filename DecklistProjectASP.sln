@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecklistProjectASP", "DecklistProjectASP\DecklistProjectASP.csproj", "{C867506A-6B21-4ADE-82CD-AF9C58198D6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecklistProjectASP", "DecklistProjectASP\DecklistProjectASP.csproj", "{C867506A-6B21-4ADE-82CD-AF9C58198D6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecklistProjectASPTests", "DecklistProjectASPTests\DecklistProjectASPTests.csproj", "{8D724496-2912-4400-8CFB-8705C97EE1FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecklistProjectASPSeleniumTests", "DecklistProjectASPSeleniumTests\DecklistProjectASPSeleniumTests.csproj", "{0E765805-E9E8-40FB-9993-A058D633909D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{C867506A-6B21-4ADE-82CD-AF9C58198D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C867506A-6B21-4ADE-82CD-AF9C58198D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C867506A-6B21-4ADE-82CD-AF9C58198D6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D724496-2912-4400-8CFB-8705C97EE1FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D724496-2912-4400-8CFB-8705C97EE1FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D724496-2912-4400-8CFB-8705C97EE1FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D724496-2912-4400-8CFB-8705C97EE1FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E765805-E9E8-40FB-9993-A058D633909D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E765805-E9E8-40FB-9993-A058D633909D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E765805-E9E8-40FB-9993-A058D633909D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E765805-E9E8-40FB-9993-A058D633909D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

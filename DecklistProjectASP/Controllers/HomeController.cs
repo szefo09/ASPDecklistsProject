@@ -25,7 +25,7 @@ namespace DecklistProjectASP.Controllers
         {
             DecksUsersAmount dua = new DecksUsersAmount()
             {
-                DecksAmount = _context.Decklists.Count(),
+                DecksAmount = _context.Decklists.Where(x=>x.isPublic).Count(),
                 UsersAmount = _context.Users.Count()
             };
 

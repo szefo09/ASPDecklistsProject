@@ -14,6 +14,7 @@ namespace DecklistProjectASP.ViewModel
         public string DeckName { get; set; }
         [Display(Name = "Decklist:")]
         public Deck Deck { get; set; }
+        public string OwnerName { get; set; }
         public ICollection<CardWithAmount> Cards { get; set; }
     }
     public class CardWithAmount

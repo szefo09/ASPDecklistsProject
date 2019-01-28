@@ -79,6 +79,9 @@
     </dl>
 </div>
 <div>
-    <p><a asp-action="Edit" asp-route-id="@Model.Id">Edit</a></p>
+    @if (User.Identity.IsAuthenticated && (User.Identity.Name == Model.OwnerName || User.IsInRole("Admin")))
+    {
+        <p><a asp-action="Edit" asp-route-id="@Model.Id">Edit</a></p>
+    }
     <p><a asp-action="Index">Back to List</a></p>
 </div>

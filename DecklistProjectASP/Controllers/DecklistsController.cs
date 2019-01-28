@@ -69,6 +69,7 @@ namespace DecklistProjectASP.Controllers
         private Task<IdentityUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Decklists/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -89,8 +90,9 @@ namespace DecklistProjectASP.Controllers
                 Deck = deck,
                 DeckName = decklist.DeckName,
                 Id = decklist.DecklistId,
-                Cards = await _loadCardsFromId.Load(_context.Card.ToList(), deck.FullDeck)
-            };
+                Cards = await _loadCardsFromId.Load(_context.Card.ToList(), deck.FullDeck),
+                OwnerName= _context.Users.Find(decklist.OwnerID).UserName
+        };
 
             return View(decklistDisplay);
         }
@@ -172,6 +174,7 @@ namespace DecklistProjectASP.Controllers
             }
             return View(de);
         }
+        [AllowAnonymous]
         public async Task<IActionResult> Download(int? id)
         {
             if (id == null)
@@ -180,11 +183,13 @@ namespace DecklistProjectASP.Controllers
             }
 
             var decklist = await _context.Decklists.FindAsync(id);
-            if (decklist != null)
+            if (decklist != null && (decklist.isPublic || 
+                User.Identity.Name == _context.Users.Find(decklist.OwnerID).UserName 
+                || User.IsInRole("Admin")))
             {
                 return File(Encoding.UTF8.GetBytes(decklist.DecklistData), "text/plain", decklist.DeckName+".ydk");
             }
-            return View();
+            return Redirect("../../Identity/Account/Login");
         }
 
         // POST: Decklists/Edit/5
