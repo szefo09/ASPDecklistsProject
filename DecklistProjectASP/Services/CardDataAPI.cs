@@ -16,27 +16,27 @@ namespace DecklistProjectASP.Services
     {
         public async Task<List<Card>> GetCardListFromAPI()
         {
-            List<ApiCard> deserializedCards = new List<ApiCard>();
-            using (var client = new HttpClient())
-            {
-                HttpResponseMessage response = client.GetAsync("https://db.ygoprodeck.com/api/v2/cardinfo.php").Result;
-                if (response.IsSuccessStatusCode)
+                List<ApiCard> deserializedCards = new List<ApiCard>();
+                using (var client = new HttpClient())
                 {
-                    string CardsJsonString =await response.Content.ReadAsStringAsync();
-                    CardsJsonString = CardsJsonString.Substring(1, CardsJsonString.Length - 2);
-                    deserializedCards.AddRange(JsonConvert.DeserializeObject<List<ApiCard>>(CardsJsonString));
+                    HttpResponseMessage response = client.GetAsync("https://db.ygoprodeck.com/api/v2/cardinfo.php").Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string CardsJsonString = await response.Content.ReadAsStringAsync();
+                        CardsJsonString = CardsJsonString.Substring(1, CardsJsonString.Length - 2);
+                        deserializedCards.AddRange(JsonConvert.DeserializeObject<List<ApiCard>>(CardsJsonString));
+                    }
                 }
-            }
-            List<Card> cards = new List<Card>();
-            foreach (var c in deserializedCards)
-            {
-                Card card = new Card()
+                List<Card> cards = new List<Card>();
+                foreach (var c in deserializedCards)
                 {
-                    CardName = c.name,
-                    CardIdentifier = Convert.ToInt32(c.id),
-                };
-                cards.Add(card);
-            }
+                    Card card = new Card()
+                    {
+                        CardName = c.name,
+                        CardIdentifier = Convert.ToInt32(c.id),
+                    };
+                    cards.Add(card);
+                }
             return cards;
         }
     }

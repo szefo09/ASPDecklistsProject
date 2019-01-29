@@ -20,7 +20,7 @@ namespace DecklistProjectASP.Data
             builder.Entity<CardsDecklists>().HasKey(cd => new { cd.DecklistId, cd.CardId });
         }
         public DbSet<Decklist> Decklists { get; set; }
-        public DbSet<Card> Card { get; set; }
+        virtual public DbSet<Card> Card { get; set; }
         public DbSet<CardsDecklists> CardsDecklist { get; set; }
     }
 }

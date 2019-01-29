@@ -34,7 +34,7 @@ namespace DecklistProjectASPSeleniumTests
             {
                 var po = new SearchForCardPage(driver);
                 po.Navigate();
-                po.CardNameInput.SendKeys("Ash");
+                po.CardNameInput.SendKeys("Blue-Eyes");
                 po.CardSearchSubmit.Click();
 
                 new WebDriverWait(driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.TitleContains("Result:"));
