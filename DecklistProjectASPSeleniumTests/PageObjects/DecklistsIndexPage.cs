@@ -11,6 +11,8 @@ namespace DecklistProjectASPSeleniumTests.PageObjects
     {
         public const string CreateNewDecklistButtonSelector = "body > div > p:nth-child(2) > a";
         public const string SearchForCardButtonSelector = "body > div > p:nth-child(3) > a";
+        public string Title = "Public Decklists";
+        public const string DetailsForDeckSelector = "body > div > table > tbody > tr > td:nth-child(3) > a:nth-child(1)";
 
         public DecklistsIndexPage(RemoteWebDriver driver) : base(driver,"Decklists")
         {
@@ -22,5 +24,7 @@ namespace DecklistProjectASPSeleniumTests.PageObjects
 
         [FindsBy(How = How.CssSelector, Using = SearchForCardButtonSelector)]
         public IWebElement SearchForCardButton { get; set; }
+        [FindsBy(How = How.CssSelector, Using =DetailsForDeckSelector)]
+        public IWebElement DetailsForDeck { get; set; }
     }
 }

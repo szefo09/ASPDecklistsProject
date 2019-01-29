@@ -27,4 +27,10 @@
     <ProjectReference Include="..\DecklistProjectASP\DecklistProjectASP.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="AI_BlueEyes.ydk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
