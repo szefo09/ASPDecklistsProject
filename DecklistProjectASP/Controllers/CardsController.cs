@@ -24,16 +24,12 @@ namespace DecklistProjectASP.Controllers
             _cardDataAPI = cardDataAPI;
         }
 
-        public CardsController()
-        {
-        }
-
         public async Task<IActionResult> Update()
         {
             //_context.Card.RemoveRange(_context.Card.ToList());
            //_context.SaveChanges();
             List<Card> result = _cardDataAPI.GetCardListFromAPI().Result;
-            IQueryable<Card> entitiesExist = from ent in _context.Card
+            var entitiesExist = from ent in _context.Card
                                              where result.Any(add => ent.CardIdentifier.Equals(add.CardIdentifier))
                                              select ent;
             //Add new cards
