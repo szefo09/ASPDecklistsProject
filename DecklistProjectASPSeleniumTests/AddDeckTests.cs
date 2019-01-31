@@ -68,7 +68,7 @@ namespace DecklistProjectASPSeleniumTests
                 po.DecklistName.SendKeys("AI_Blue_Eyes");
                 po.ShowAsPublic.SendKeys(Keys.Space);
                 po.CreateSubmit.Click();
-                new WebDriverWait(driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.TitleContains("Add Decklist"));
+                new WebDriverWait(driver, TimeSpan.FromSeconds(10)).Until(ExpectedConditions.ElementExists(By.CssSelector("body > div > div.row > div > form > div:nth-child(2) > span")));
             }
         }
     }
